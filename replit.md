@@ -1,51 +1,44 @@
-# CampusBite
+# [Project name]
 
-CampusBite lets campus customers order ahead and track pickup tokens while canteen staff manage the menu, orders, and kitchen display.
+_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/campusbite run dev` — run the customer and staff web app
-- `pnpm --filter @workspace/api-server run dev` — run the API server
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- SQLite file defaults to `artifacts/api-server/.data/campusbite.sqlite`; override with `CAMPUSBITE_DB_PATH`.
-- Set `CAMPUSBITE_ADMIN_EMAIL` and the `CAMPUSBITE_ADMIN_PASSWORD` secret to create or update the staff login at API startup. `SESSION_SECRET` is also required.
+- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
+- Required env: `DATABASE_URL` — Postgres connection string
 
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
 - API: Express 5
-- DB: SQLite via Node's built-in `node:sqlite` API
+- DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-- `lib/api-spec/openapi.yaml` is the API contract.
-- `artifacts/api-server/src/lib/campus-db.ts` owns the CampusBite SQLite schema and sample menu.
-- `artifacts/api-server/src/lib/campus-auth.ts` owns hashed passwords and server-side sessions.
-- `artifacts/api-server/src/lib/campus-orders.ts` owns order transitions, analytics, and daily token allocation.
-- `artifacts/campusbite/src/` is the web application.
+_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
 
 ## Architecture decisions
 
-- The app data store is SQLite as requested; do not switch CampusBite to the workspace PostgreSQL scaffold without a product decision.
-- Daily tokens use an SQLite write transaction and a unique `(token_date, token_number)` constraint to prevent duplicates.
-- Normal registration always creates a customer. Admin identities are bootstrapped only from environment configuration.
+_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
 
 ## Product
 
-Customers browse and order canteen food, receive sequential daily pickup tokens, and track status. Staff manage orders and menu availability, with kitchen and ready-token screens for in-canteen displays.
+_Describe the high-level user-facing capabilities of this app once they exist._
 
 ## User preferences
 
-No additional project-specific preferences recorded.
+_Populate as you build — explicit user instructions worth remembering across sessions._
 
 ## Gotchas
 
-- Keep the admin password in Replit Secrets; do not add demo credentials to the client or source code.
+_Populate as you build — sharp edges, "always run X before Y" rules._
 
 ## Pointers
 
