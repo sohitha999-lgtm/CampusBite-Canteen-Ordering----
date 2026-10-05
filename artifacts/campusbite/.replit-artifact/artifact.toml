@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "CampusBite"
+description = "A responsive canteen pre-order and token management app for customers and canteen staff, with menu browsing, order tracking, staff tools, and live kitchen displays."
+version = "1.0.0"
+id = "artifacts/campusbite"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26046
+
+[services.development]
+run = "pnpm --filter @workspace/campusbite run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/campusbite", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/campusbite/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26046"
+BASE_PATH = "/"

@@ -1,0 +1,1025 @@
+Build a complete, modern, responsive web application called **CampusBite – Canteen Pre-Order & Token Management System**.
+
+The application is for a college/office canteen. Customers should be able to browse the menu, place food orders, automatically receive a token number, and track their order. Canteen staff/admin should be able to manage menu items, view incoming orders, update order statuses, and operate a live token display screen.
+
+The application should be fully functional, not just a UI prototype.
+
+## 1. TECHNOLOGY STACK
+
+Use:
+
+* Frontend: React + TypeScript
+* Styling: Tailwind CSS
+* Backend: Node.js + Express
+* Database: SQLite for the initial version
+* ORM/database library: Prisma or an appropriate SQLite-compatible solution
+* Authentication: Secure session/JWT-based authentication
+* Icons: Lucide React or another clean icon library
+* Charts: Recharts if needed
+* QR code: A suitable QR-code library
+* Use environment variables for secrets
+* Make the application easy to run and deploy on Replit
+
+Keep the architecture clean and modular.
+
+## 2. USER TYPES
+
+Create two main roles:
+
+### CUSTOMER
+
+Customers can:
+
+* Register
+* Login
+* Browse menu
+* Search food
+* Filter by category
+* Add food to cart
+* Change quantities
+* Place an order
+* Select pickup time
+* Receive an automatically generated token number
+* View order details
+* Track order status
+* View order history
+* View profile
+
+### ADMIN / CANTEEN STAFF
+
+Admins can:
+
+* Login through a separate admin login
+* View dashboard
+* View incoming orders
+* Accept/reject orders
+* Update order status
+* Manage food items
+* Add food
+* Edit food
+* Delete food
+* Mark food as available/unavailable
+* View daily sales
+* View popular items
+* View active tokens
+* Operate the token display screen
+
+Do NOT allow normal users to register themselves as admin.
+
+## 3. CUSTOMER HOME PAGE
+
+Create a professional food-ordering style homepage.
+
+Header:
+
+* CampusBite logo
+* Home
+* Menu
+* My Orders
+* Cart
+* Profile
+* Login/Register or user menu
+
+Hero section:
+
+"Skip the Queue. Order Ahead."
+
+Subtitle:
+"Order your favorite canteen food, get your token, and collect it when it's ready."
+
+Buttons:
+
+* Order Now
+* View Menu
+
+Show:
+
+* Today's popular items
+* Food categories
+* Current queue/token information
+* Simple explanation of how the system works
+
+Use attractive food cards and responsive design.
+
+## 4. MENU PAGE
+
+Create categories:
+
+* Breakfast
+* Meals
+* Snacks
+* Fast Food
+* Drinks
+* Desserts
+
+Each food card should contain:
+
+* Food image
+* Food name
+* Description
+* Price
+* Category
+* Vegetarian/non-vegetarian indicator if applicable
+* Availability status
+* Add to Cart button
+
+If an item is unavailable:
+
+* Display "Sold Out"
+* Disable Add to Cart
+
+Include:
+
+* Search bar
+* Category filters
+* Sort by price/name/popularity
+
+## 5. FOOD DETAILS
+
+When the user clicks a food item, show:
+
+* Large image
+* Name
+* Description
+* Price
+* Category
+* Availability
+* Quantity selector
+* Add to Cart
+
+## 6. CART
+
+Create a proper shopping cart.
+
+Display:
+
+Food name
+Quantity
+Unit price
+Subtotal
+
+Allow:
+
+* Increase quantity
+* Decrease quantity
+* Remove item
+* Clear cart
+
+Calculate:
+
+Subtotal
+Optional tax/service charge
+Total
+
+Show:
+
+"Proceed to Checkout"
+
+Persist the cart appropriately so accidental page refresh does not destroy it.
+
+## 7. CHECKOUT
+
+Create a checkout page.
+
+Display:
+
+* Selected items
+* Quantity
+* Total amount
+
+Allow the customer to select:
+
+### Pickup Time
+
+* ASAP
+* Available predefined time slots
+
+For MVP, provide:
+
+* Pay at Canteen
+* Online Payment as a disabled/placeholder option for future implementation
+
+Add:
+"Place Order"
+
+Before placing the order, validate:
+
+* User is logged in
+* Cart is not empty
+* Food items are still available
+* Quantities are valid
+
+## 8. AUTOMATIC TOKEN NUMBER GENERATION
+
+This is a CORE feature.
+
+After an order is successfully placed, automatically generate a token number.
+
+Tokens should be sequential for each business day.
+
+Example:
+
+First order:
+#001
+
+Second order:
+#002
+
+Third order:
+#003
+
+...
+
+100th order:
+#100
+
+The token counter should reset automatically on a new day.
+
+DO NOT simply generate a random number.
+
+The backend must guarantee that two simultaneous orders cannot receive the same token.
+
+Use a database-safe approach/transaction for token generation.
+
+Store:
+
+* token number
+* order ID
+* date
+* status
+
+Display the token prominently after checkout.
+
+Example:
+
+---
+
+ORDER CONFIRMED 🎉
+
+Your Token
+
+#042
+
+Order ID:
+ORD-2026-00142
+
+Pickup:
+12:45 PM
+
+Status:
+Order Placed
+
+## [Track Order]
+
+## 9. ORDER STATUS
+
+Use these statuses:
+
+PLACED
+↓
+ACCEPTED
+↓
+PREPARING
+↓
+READY
+↓
+COMPLETED
+
+Also allow:
+
+CANCELLED
+REJECTED
+
+The customer should see a visual progress tracker.
+
+Example:
+
+✓ Order Placed
+↓
+✓ Accepted
+↓
+● Preparing
+↓
+○ Ready
+↓
+○ Completed
+
+Use clear visual indicators.
+
+## 10. CUSTOMER ORDER TRACKING
+
+Create a "Track Order" page.
+
+Display:
+
+Token:
+#042
+
+Order ID:
+ORD-2026-00142
+
+Items:
+2 × Veg Burger
+1 × Coffee
+
+Total:
+₹150
+
+Pickup:
+12:45 PM
+
+Current Status:
+PREPARING
+
+Show an estimated waiting message such as:
+
+"Your order is being prepared."
+
+If status becomes READY:
+
+"🎉 Your order is ready! Please collect it at the canteen counter."
+
+Refresh order status automatically without requiring the user to manually refresh the page.
+
+Use polling or WebSocket/SSE if appropriate for the project size.
+
+## 11. MY ORDERS
+
+Create an order history page.
+
+Show:
+
+* Token number
+* Order ID
+* Date
+* Items
+* Total
+* Status
+
+Example:
+
+#042 | ₹150 | READY
+#038 | ₹90 | COMPLETED
+#031 | ₹120 | COMPLETED
+
+Clicking an order should show complete details.
+
+## 12. ADMIN LOGIN
+
+Create a secure admin login.
+
+Admin should access:
+
+/admin
+
+Do not expose admin functionality to customers.
+
+Use role-based authorization on the backend, not only frontend route protection.
+
+## 13. ADMIN DASHBOARD
+
+Create a modern dashboard.
+
+Show:
+
+Today's Orders
+Pending Orders
+Preparing Orders
+Ready Orders
+Completed Orders
+Today's Revenue
+
+Example:
+
+Today's Orders: 124
+Pending: 18
+Preparing: 12
+Ready: 7
+Completed: 87
+Revenue: ₹8,450
+
+Use cards with icons.
+
+Add a simple sales chart.
+
+## 14. ADMIN ORDER MANAGEMENT
+
+Create a live order management page.
+
+Display incoming orders in cards/table.
+
+Each order should show:
+
+Token #042
+Order ID
+Customer name
+Items
+Quantity
+Total
+Pickup time
+Order time
+Current status
+
+Admin controls:
+
+[Accept]
+[Reject]
+
+Then:
+
+[Preparing]
+
+Then:
+
+[Ready]
+
+Then:
+
+[Complete]
+
+Make the order status update in the database.
+
+When admin marks an order READY, the customer should immediately see the updated status.
+
+## 15. KITCHEN DISPLAY SYSTEM
+
+Create a dedicated page:
+
+/kitchen
+
+This page is intended for a screen/tablet inside the canteen.
+
+Display active orders in large cards.
+
+Example:
+
+---
+
+TOKEN #042
+2 × Veg Burger
+1 × Coffee
+
+## PREPARING
+
+---
+
+TOKEN #043
+1 × Pizza
+2 × Juice
+
+## READY
+
+Use clear, large typography so the screen can be viewed from a distance.
+
+Separate:
+
+### PREPARING
+
+and
+
+### READY
+
+sections.
+
+Automatically update the screen when orders change.
+
+## 16. TOKEN DISPLAY SCREEN
+
+Create another dedicated page:
+
+/display
+
+This should be a public screen with no login requirement.
+
+It should show recently completed/ready tokens.
+
+Example:
+
+================================
+ORDERS READY
+============
+
+```
+   #042
+
+   #043
+
+   #039
+```
+
+================================
+Please collect your order
+from the canteen counter.
+=========================
+
+When a new order becomes READY:
+
+* Add the token to the display
+* Animate/highlight the new token
+* Optionally play a short notification sound if browser permissions allow
+
+Keep the interface extremely simple and readable.
+
+## 17. ADMIN MENU MANAGEMENT
+
+Create:
+
+/admin/menu
+
+Admin can:
+
+### Add Food
+
+Fields:
+
+* Name
+* Description
+* Price
+* Category
+* Image URL/upload
+* Vegetarian/non-vegetarian
+* Available/unavailable
+
+### Edit Food
+
+Allow changing all food information.
+
+### Delete Food
+
+Require confirmation before deleting.
+
+### Availability
+
+Allow admin to quickly toggle:
+
+AVAILABLE
+SOLD OUT
+
+Do not delete an item just because it is temporarily unavailable.
+
+## 18. ADMIN ANALYTICS
+
+Create a basic analytics page.
+
+Display:
+
+* Total orders today
+* Revenue today
+* Orders this week
+* Best-selling items
+* Orders by category
+* Average order value
+
+Create simple charts using Recharts.
+
+Do not overcomplicate the analytics.
+
+## 19. DATABASE DESIGN
+
+Create appropriate database tables/models.
+
+At minimum:
+
+### User
+
+id
+name
+email
+passwordHash
+phone
+role
+createdAt
+
+### FoodItem
+
+id
+name
+description
+price
+category
+imageUrl
+isVegetarian
+available
+createdAt
+updatedAt
+
+### Order
+
+id
+orderNumber
+tokenNumber
+userId
+totalAmount
+status
+pickupTime
+paymentMethod
+paymentStatus
+orderDate
+createdAt
+updatedAt
+
+### OrderItem
+
+id
+orderId
+foodItemId
+quantity
+price
+
+Store the price at the time of ordering so historical orders do not change when menu prices change.
+
+### DailyTokenCounter
+
+id
+date
+lastTokenNumber
+
+Use this to safely generate daily sequential tokens.
+
+### Notification
+
+id
+userId
+orderId
+message
+isRead
+createdAt
+
+Use relationships properly.
+
+## 20. TOKEN GENERATION REQUIREMENTS
+
+Important:
+
+Token generation must happen on the SERVER.
+
+Never generate token numbers only in React.
+
+The token should be unique for the day.
+
+Example:
+
+2026-10-05:
+001
+002
+003
+
+2026-10-06:
+001
+002
+003
+
+Store the date with the token.
+
+Make sure concurrent orders cannot receive duplicate tokens.
+
+## 21. ORDER NUMBER
+
+In addition to the token, generate a unique order ID.
+
+Example:
+
+ORD-20261005-00042
+
+Token:
+
+#042
+
+The customer sees both.
+
+## 22. AUTHENTICATION
+
+Implement secure authentication.
+
+Requirements:
+
+* Passwords must be hashed
+* Never store plain-text passwords
+* Validate email
+* Protect authenticated routes
+* Protect admin routes
+* Use secure session/token handling
+* Add logout
+
+For demo/testing, create a seeded admin account through environment variables or a seed script.
+
+Do not hardcode sensitive credentials into frontend code.
+
+## 23. RESPONSIVE DESIGN
+
+The application must work on:
+
+* Desktop
+* Laptop
+* Tablet
+* Mobile
+
+Customer UI should be mobile-friendly because students will primarily use their phones.
+
+Admin dashboard should be optimized for desktop/tablet.
+
+Kitchen/display screens should use large text.
+
+## 24. UI/UX STYLE
+
+Use a clean, modern campus-food aesthetic.
+
+Design requirements:
+
+* Rounded cards
+* Clean spacing
+* Modern typography
+* Attractive food images
+* Clear buttons
+* Good empty states
+* Loading states
+* Error states
+* Toast notifications
+* Responsive navigation
+
+Do not make the interface overly complicated.
+
+Use consistent colors throughout the application.
+
+Suggested branding:
+
+Name:
+CampusBite
+
+Tagline:
+"Skip the Queue. Enjoy Your Food."
+
+Logo:
+A simple burger/food + token concept.
+
+## 25. IMPORTANT STATES
+
+Handle these cases properly:
+
+* Empty cart
+* Food sold out
+* Failed order
+* Invalid quantity
+* Network error
+* Session expired
+* Order cancelled
+* Admin rejects order
+* No active orders
+* No order history
+* No notifications
+
+Show useful messages rather than blank screens.
+
+## 26. SECURITY
+
+Implement basic security best practices:
+
+* Validate all backend inputs
+* Sanitize user-controlled values
+* Hash passwords
+* Use authorization middleware
+* Never trust role values from the frontend
+* Never expose database credentials
+* Use environment variables
+* Prevent unauthorized order modification
+* Customers can only view their own orders
+* Only admins can modify food/menu/order status
+
+## 27. SEED DATA
+
+Create sample data so the application looks populated immediately.
+
+Create approximately:
+
+10 food items
+
+Example:
+
+Veg Burger — ₹60
+Cheese Burger — ₹80
+Veg Pizza — ₹100
+Sandwich — ₹50
+French Fries — ₹50
+Samosa — ₹20
+Masala Dosa — ₹60
+Veg Fried Rice — ₹90
+Coffee — ₹30
+Fresh Juice — ₹40
+
+Create a demo admin account through a seed script/environment configuration.
+
+Create a few sample orders for testing if appropriate.
+
+## 28. NAVIGATION
+
+Customer navigation:
+
+Home
+Menu
+Cart
+My Orders
+Profile
+
+Admin navigation:
+
+Dashboard
+Orders
+Kitchen
+Token Display
+Menu
+Analytics
+Logout
+
+## 29. API STRUCTURE
+
+Create clean REST API endpoints.
+
+Examples:
+
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+GET /api/auth/me
+
+GET /api/menu
+GET /api/menu/:id
+
+POST /api/orders
+GET /api/orders
+GET /api/orders/:id
+GET /api/orders/:id/status
+
+Admin:
+
+GET /api/admin/orders
+PATCH /api/admin/orders/:id/status
+
+POST /api/admin/menu
+PATCH /api/admin/menu/:id
+DELETE /api/admin/menu/:id
+
+GET /api/admin/analytics
+
+Token/display:
+
+GET /api/display/ready
+GET /api/display/active
+
+Adapt the exact API structure to the implementation.
+
+## 30. REAL-TIME UPDATES
+
+For the MVP, implement reliable automatic polling every few seconds for:
+
+* Customer order status
+* Kitchen orders
+* Token display
+
+If straightforward, use WebSockets or Server-Sent Events instead.
+
+Do not add unnecessary complexity if polling is more reliable for Replit.
+
+## 31. ERROR HANDLING
+
+Create centralized backend error handling.
+
+Frontend should display friendly messages.
+
+Example:
+
+"Unable to place your order. Please try again."
+
+Never expose stack traces or sensitive backend errors to users.
+
+## 32. TESTING
+
+After implementation, test:
+
+1. Register customer
+2. Login
+3. Browse menu
+4. Add items
+5. Change quantity
+6. Checkout
+7. Place order
+8. Verify token generated
+9. Verify order saved
+10. Login as admin
+11. Accept order
+12. Change to Preparing
+13. Change to Ready
+14. Verify customer sees READY
+15. Verify token appears on display
+16. Complete order
+17. Verify order history
+18. Verify daily token sequence
+19. Verify token resets on a new date
+20. Verify customer cannot access admin functionality
+
+Fix errors before considering the project complete.
+
+## 33. IMPORTANT MVP RULE
+
+Do not add unnecessary features such as:
+
+* Multiple restaurants
+* Delivery system
+* Complex payment integration
+* AI chatbot
+* Social media
+* Loyalty program
+* Advanced recommendation engine
+
+Focus on making these core features work perfectly:
+
+CUSTOMER
+→ Menu
+→ Cart
+→ Checkout
+→ Order
+→ Token
+→ Tracking
+
+ADMIN
+→ Orders
+→ Status Updates
+→ Menu Management
+
+KITCHEN
+→ Active Orders
+
+DISPLAY
+→ Ready Tokens
+
+## 34. PROJECT STRUCTURE
+
+Use a clean structure similar to:
+
+client/
+src/
+components/
+pages/
+layouts/
+hooks/
+services/
+types/
+utils/
+
+server/
+routes/
+controllers/
+middleware/
+services/
+utils/
+
+prisma/
+schema.prisma
+seed.ts
+
+Keep frontend and backend code logically separated.
+
+## 35. FINAL REQUIREMENT
+
+Build the application completely inside Replit.
+
+Do not stop after creating the frontend.
+
+The final result must have:
+
+✓ Working frontend
+✓ Working backend
+✓ Working database
+✓ Authentication
+✓ Customer ordering
+✓ Automatic daily token generation
+✓ Cart
+✓ Checkout
+✓ Order tracking
+✓ Admin dashboard
+✓ Menu management
+✓ Kitchen dashboard
+✓ Live token display
+✓ Order status updates
+✓ Responsive design
+✓ Seed data
+✓ Error handling
+
+After implementation, run the application, identify build/runtime errors, fix them, and make sure the main customer-to-admin ordering flow works end-to-end.
+
+The most important demonstration flow should be:
+
+Customer logs in
+→ selects food
+→ adds to cart
+→ places order
+→ receives Token #001
+→ Admin sees Token #001
+→ Admin accepts it
+→ Admin changes status to Preparing
+→ Admin changes status to Ready
+→ Customer sees "Order Ready"
+→ Token #001 appears on the public display
+→ Admin marks it Completed
+→ Customer sees it in order history.
+
+Make this flow polished and reliable before adding any optional features.

@@ -47,3 +47,6 @@ Thumbs.db
 # Replit
 .cache/
 .local/
+
+# CampusBite local SQLite database
+/artifacts/api-server/.data/

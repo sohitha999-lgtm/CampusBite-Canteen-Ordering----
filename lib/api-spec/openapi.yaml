@@ -3,13 +3,17 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CampusBite canteen ordering and token management API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: menu
+  - name: orders
+  - name: admin
+  - name: display
 paths:
   /healthz:
     get:
@@ -24,13 +28,490 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/register:
+    post:
+      operationId: registerCustomer
+      tags: [auth]
+      summary: Register a customer account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registered customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /auth/login:
+    post:
+      operationId: loginCustomer
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /auth/admin/login:
+    post:
+      operationId: loginAdmin
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated administrator
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        "204":
+          description: Session ended
+  /auth/me:
+    get:
+      operationId: getSession
+      tags: [auth]
+      responses:
+        "200":
+          description: Current session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /menu:
+    get:
+      operationId: listMenu
+      tags: [menu]
+      parameters:
+        - name: category
+          in: query
+          schema:
+            $ref: "#/components/schemas/FoodCategory"
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [popular, price-asc, price-desc, name]
+      responses:
+        "200":
+          description: Menu items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FoodItem"
+  /menu/{id}:
+    get:
+      operationId: getMenuItem
+      tags: [menu]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoodItem"
+  /orders:
+    get:
+      operationId: listMyOrders
+      tags: [orders]
+      responses:
+        "200":
+          description: Current customer's orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: placeOrder
+      tags: [orders]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Order placed with its daily token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+  /orders/{id}/status:
+    get:
+      operationId: getOrderStatus
+      tags: [orders]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Current order status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrderStatus"
+  /admin/dashboard:
+    get:
+      operationId: getAdminDashboard
+      tags: [admin]
+      responses:
+        "200":
+          description: Today's canteen overview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /admin/orders:
+    get:
+      operationId: listAdminOrders
+      tags: [admin]
+      responses:
+        "200":
+          description: Orders for the canteen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+  /admin/orders/{id}/status:
+    patch:
+      operationId: updateOrderStatus
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderStatusInput"
+      responses:
+        "200":
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+  /admin/menu:
+    post:
+      operationId: createMenuItem
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FoodItemInput"
+      responses:
+        "201":
+          description: Created menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoodItem"
+  /admin/menu/{id}:
+    patch:
+      operationId: updateMenuItem
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FoodItemUpdate"
+      responses:
+        "200":
+          description: Updated menu item
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FoodItem"
+    delete:
+      operationId: deleteMenuItem
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Deleted menu item
+  /admin/analytics:
+    get:
+      operationId: getAnalytics
+      tags: [admin]
+      responses:
+        "200":
+          description: Sales analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Analytics"
+  /display/ready:
+    get:
+      operationId: getReadyTokens
+      tags: [display]
+      responses:
+        "200":
+          description: Recently ready and completed tokens
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DisplayOrder"
+  /display/active:
+    get:
+      operationId: getActiveOrders
+      tags: [display]
+      responses:
+        "200":
+          description: Active kitchen orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DisplayOrder"
 components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
+    User:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        email: { type: string, format: email }
+        phone: { type: ["string", "null"] }
+        role: { type: string, enum: [CUSTOMER, ADMIN] }
+      required: [id, name, email, phone, role]
+    Session:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+      required: [user]
+    RegisterInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 100 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        phone: { type: ["string", "null"] }
+      required: [name, email, password]
+    LoginInput:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 1 }
+      required: [email, password]
+    FoodCategory:
+      type: string
+      enum: [Breakfast, Meals, Snacks, Fast Food, Drinks, Desserts]
+    FoodItem:
+      type: object
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        price: { type: number }
+        category:
+          $ref: "#/components/schemas/FoodCategory"
+        imageUrl: { type: ["string", "null"] }
+        isVegetarian: { type: boolean }
+        available: { type: boolean }
+        popular: { type: boolean }
+      required: [id, name, description, price, category, imageUrl, isVegetarian, available, popular]
+    FoodItemInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, maxLength: 1000 }
+        price: { type: number, minimum: 0 }
+        category:
+          $ref: "#/components/schemas/FoodCategory"
+        imageUrl: { type: ["string", "null"] }
+        isVegetarian: { type: boolean }
+        available: { type: boolean }
+        popular: { type: boolean }
+      required: [name, description, price, category, isVegetarian, available, popular]
+    FoodItemUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        description: { type: string, maxLength: 1000 }
+        price: { type: number, minimum: 0 }
+        category:
+          $ref: "#/components/schemas/FoodCategory"
+        imageUrl: { type: ["string", "null"] }
+        isVegetarian: { type: boolean }
+        available: { type: boolean }
+        popular: { type: boolean }
+    OrderStatus:
+      type: object
+      properties:
+        id: { type: integer }
+        status: { type: string, enum: [PLACED, ACCEPTED, PREPARING, READY, COMPLETED, CANCELLED, REJECTED] }
+        tokenNumber: { type: integer }
+        updatedAt: { type: string, format: date-time }
+      required: [id, status, tokenNumber, updatedAt]
+    OrderStatusInput:
+      type: object
+      properties:
+        status: { type: string, enum: [ACCEPTED, PREPARING, READY, COMPLETED, CANCELLED, REJECTED] }
+      required: [status]
+    OrderLineInput:
+      type: object
+      properties:
+        foodItemId: { type: integer }
+        quantity: { type: integer, minimum: 1, maximum: 50 }
+      required: [foodItemId, quantity]
+    OrderInput:
+      type: object
+      properties:
+        items:
+          type: array
+          minItems: 1
+          items:
+            $ref: "#/components/schemas/OrderLineInput"
+        pickupTime: { type: string, minLength: 1 }
+        paymentMethod: { type: string, enum: [PAY_AT_CANTEEN] }
+      required: [items, pickupTime, paymentMethod]
+    OrderItem:
+      type: object
+      properties:
+        foodItemId: { type: integer }
+        name: { type: string }
+        quantity: { type: integer }
+        unitPrice: { type: number }
+      required: [foodItemId, name, quantity, unitPrice]
+    Order:
+      type: object
+      properties:
+        id: { type: integer }
+        orderNumber: { type: string }
+        tokenNumber: { type: integer }
+        tokenDate: { type: string, format: date }
+        status: { type: string, enum: [PLACED, ACCEPTED, PREPARING, READY, COMPLETED, CANCELLED, REJECTED] }
+        totalAmount: { type: number }
+        pickupTime: { type: string }
+        paymentMethod: { type: string }
+        customerName: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+      required: [id, orderNumber, tokenNumber, tokenDate, status, totalAmount, pickupTime, paymentMethod, customerName, createdAt, updatedAt, items]
+    DisplayOrder:
+      type: object
+      properties:
+        id: { type: integer }
+        tokenNumber: { type: integer }
+        status: { type: string, enum: [PLACED, ACCEPTED, PREPARING, READY, COMPLETED, CANCELLED, REJECTED] }
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrderItem"
+      required: [id, tokenNumber, status, items]
+    Dashboard:
+      type: object
+      properties:
+        todayOrders: { type: integer }
+        pendingOrders: { type: integer }
+        preparingOrders: { type: integer }
+        readyOrders: { type: integer }
+        completedOrders: { type: integer }
+        revenueToday: { type: number }
+        activeTokens:
+          type: array
+          items:
+            $ref: "#/components/schemas/DisplayOrder"
+      required: [todayOrders, pendingOrders, preparingOrders, readyOrders, completedOrders, revenueToday, activeTokens]
+    BestSeller:
+      type: object
+      properties:
+        name: { type: string }
+        quantity: { type: integer }
+      required: [name, quantity]
+    CategorySales:
+      type: object
+      properties:
+        category:
+          $ref: "#/components/schemas/FoodCategory"
+        orders: { type: integer }
+      required: [category, orders]
+    Analytics:
+      type: object
+      properties:
+        totalOrdersToday: { type: integer }
+        revenueToday: { type: number }
+        ordersThisWeek: { type: integer }
+        averageOrderValue: { type: number }
+        bestSellingItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/BestSeller"
+        ordersByCategory:
+          type: array
+          items:
+            $ref: "#/components/schemas/CategorySales"
+      required: [totalOrdersToday, revenueToday, ordersThisWeek, averageOrderValue, bestSellingItems, ordersByCategory]
 
